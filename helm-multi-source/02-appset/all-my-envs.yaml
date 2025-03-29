@@ -9,6 +9,14 @@ spec:
   generators:
   - list:
       elements:
+      - env: integration-gpu
+        region: us
+        type: non-prod
+        version: qa
+      - env: integration-non-gpu
+        region: us
+        type: non-prod
+        version: qa
       - env: qa
         region: us  
         type: non-prod   
@@ -33,33 +41,25 @@ spec:
         region: us 
         type: prod
         version: prod         
-      - env: integration-gpu
-        region: us 
-        type: non-prod
-        version: staging
-      - env: integration-non-gpu
-        region: us 
-        type: non-prod
-        version: staging
   template:      
     metadata:
       name: '{{.env}}' 
     spec:
       # The project the application belongs to.
       project: default
-      
+
       sources:
         - repoURL: https://kostis-codefresh.github.io/multi-sources-example
           chart: my-chart
-          targetRevision: '0.1.0'
+          targetRevision: 0.1.0
           helm:
-          valueFiles:
-            - $values/my-values/common-values.yaml
-            - $values/my-values/app-version/{{.version}}-values.yaml
-            - $values/my-values/env-type/{{.type}}-values.yaml
-            - $values/my-values/regions/{{.region}}-values.yaml
-            - $values/my-values/envs/{{.env}}-values.yaml
-        - repoURL: https://github.com/kstavland/gitops-cert-level-3-examples.git
+            valueFiles:
+            - $values/helm-multi-source/my-values/common-values.yaml          
+            - $values/helm-multi-source/my-values/app-version/{{.version}}-values.yaml               
+            - $values/helm-multi-source/my-values/env-type/{{.type}}-values.yaml  
+            - $values/helm-multi-source/my-values/regions/{{.region}}-values.yaml                
+            - $values/helm-multi-source/my-values/envs/{{.env}}-values.yaml
+        - repoURL: 'https://github.com/codefresh-contrib/gitops-cert-level-3-examples.git'
           targetRevision: HEAD
           ref: values
       
@@ -75,4 +75,3 @@ spec:
         automated: 
           prune: true 
           selfHeal: true 
-      
